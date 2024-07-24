@@ -26,7 +26,7 @@ def send_welcome_email(sender, instance, created, **kwargs):
     if created:
         subject = 'Welcome to Falcon'
         context = {'customer': instance}
-        html_message = render_to_string('auth/welcoming.html', context)
+        html_message = render_to_string('auth/verify.html', context)
         plain_message = strip_tags(html_message)
         from_email = 'noreply@falcon.com'
         to_email = instance.email
@@ -35,23 +35,23 @@ def send_welcome_email(sender, instance, created, **kwargs):
         email.attach_alternative(html_message, "text/html")
         email.send()
 
-        print(f"Welcome email sent to {instance.email}")
+        print(f"Verify email sent to {instance.email}")
 
 
 @receiver(pre_delete, sender=Customer)
-def archiving_deleted_users(sender, instance, **kwargs):
-    file_path = os.path.join(BASE_DIR, 'customers/deleted_users', f"id-{instance.id}_{instance.full_name}.json")
+def writer_deleted_users(sender, instance, **kwargs):
+    file_path = os.path.join(BASE_DIR, 'customer/deleted_users', f"id-{instance.id}_{instance.full_name}.json")
 
     file_info = {
         'id': instance.id,
         'full_name': instance.full_name,
         'email': instance.email,
         'address': instance.address,
-        'phone': instance.phone,
+        'phone': instance.phone_number,
         'is_active': instance.is_active,
         'joined': str(instance.joined)}
 
     with open(file_path, 'w') as file:
         json.dump(file_info, file, indent=4)
 
-    print(f"Product \"{instance.full_name}\" has deleted")
+    print(f"Customer \"{instance.full_name}\" has deleted")
