@@ -1,9 +1,13 @@
 import os
 import json
+from django.core.mail import send_mail
+from config import settings
 from django.db.models.signals import pre_save, post_save, pre_delete
 from config.settings import BASE_DIR
 from app.models import Product
 from django.dispatch import receiver
+
+from customer.models import Customer
 
 
 @receiver(post_save, sender=Product)
@@ -13,6 +17,7 @@ def product_save(sender, instance, created, **kwargs):
         print(kwargs)
     else:
         print('Product Updated')
+
 
 
 @receiver(pre_delete, sender=Product)
@@ -30,3 +35,4 @@ def product_delete(sender, instance, **kwargs):
         json.dump(product_data, file_json, indent=4)
 
     print(f'{instance.name} is deleted')
+
