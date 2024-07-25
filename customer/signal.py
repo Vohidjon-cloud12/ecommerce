@@ -10,15 +10,7 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
 
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        User.objects.create(user=instance)
 
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
 
 
 @receiver(post_save, sender=Customer)
@@ -40,7 +32,7 @@ def send_welcome_email(sender, instance, created, **kwargs):
 
 @receiver(pre_delete, sender=Customer)
 def writer_deleted_users(sender, instance, **kwargs):
-    file_path = os.path.join(BASE_DIR, 'customer/deleted_users', f"id-{instance.id}_{instance.full_name}.json")
+    file_path = os.path.join(BASE_DIR, 'customer/deleted', f"id-{instance.id}_{instance.full_name}.json")
 
     file_info = {
         'id': instance.id,
